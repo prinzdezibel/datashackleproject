@@ -1,0 +1,86 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           i18n_domain="${package}"
+           xmlns:browser="http://namespaces.zope.org/browser">
+    
+    <include package="grok" />
+
+ 
+    <include package="grokui.admin" />
+    
+    <configure i18n_domain="${package}">
+
+      <unauthenticatedPrincipal id="zope.anybody"
+                                title="Unauthenticated User" />
+      <unauthenticatedGroup id="zope.Anybody"
+                            title="Unauthenticated Users" />
+      <authenticatedGroup id="zope.Authenticated"
+                        title="Authenticated Users" />
+      <everybodyGroup id="zope.Everybody"
+                      title="All Users" />
+      
+     <principal id="zope.manager"
+                 title="Manager"
+                 login=${user}
+                 password_manager="SSHA"
+                 password=${passwd}
+                 />
+
+      <permission id="setmanager.Edit" title="Edit content" />
+      <role id="setmanager.Owner" title="Object owner" />
+      <grant permission="setmanager.Edit" role="setmanager.Owner" />       
+
+          <role id="zope.Manager" title="Site Manager" />
+      <role id="zope.Member" title="Site Member" />
+      <grantAll role="zope.Manager" />
+      <grant role="zope.Manager"
+             principal="zope.manager" />
+    </configure>
+    
+    <!-- include package="p2.datashackle.core" file="meta.zcml" / -->
+    <include package="p2.container" file="meta.zcml" /> 
+
+    <include package="megrok.resource" />
+    <include package="zope.dublincore" />
+    <include package="zope.session" />
+    <include package="zope.error" />
+    <include package="zope.login" />
+    <include package="zope.pluggableauth" />
+    <include package="zope.i18n" />
+    <include package="hurry.zoperesource" />
+
+    <include package="megrok.z3ctable" />    
+
+    <!-- This allows implict mappings between z3ctable.Tables and z3ctable.Columns -->
+    <include package="megrok.z3ctable" file="meta.zcml" />
+    <!-- This must happen after megrok.z3ctable inclusion-->
+    <include package="dolmen.app.container" />
+
+    <include package="dolmen.app.content" />
+    
+    <include package="menhir.simple.navtree" /> 
+
+    <include package="dolmen.menu" />
+ 
+    <include package="p2.javascript" />
+    <include package="p2.windowmanager.layout" />
+    <include package="p2.windowmanager.skin" />
+ 
+    <include package="${package}" />   
+    
+    <include package="p2.datashackle.core" /> 
+    <include package="p2.datashackle.management" />
+
+    <include package="zope.principalannotation" />   
+ 
+    <include package="zope.errorview" file="browser.zcml"/>
+
+    <includeOverrides package="p2.datashackle.management" file="skin.zcml" />  
+    
+    <include package="zope.browserresource" file="meta.zcml" />
+    <browser:defaultView name="index.html" />
+    
+    <include package="menhir.contenttype.privatefolder" />
+    
+</configure>
+
+

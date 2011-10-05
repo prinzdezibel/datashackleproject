@@ -1,0 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from zope.component import Interface
+
+class I${app_class_name}(Interface):
+    """The ${package} grok application."""
+

@@ -1,0 +1,343 @@
+[buildout]
+develop = 
+    .
+    src/p2.javascript
+    src/p2.windowmanager.layout
+    src/p2.windowmanager.skin
+    src/p2.datashackle.core
+    src/p2.container
+    src/p2.datashackle.management
+    src/menhir.contenttype.privatefolder
+
+eggs +=
+    ${package}
+    chameleon.zpt
+# sqlalchemy-migrate requires decorator    
+    decorator
+    dolmen.app.authentication
+    dolmen.app.site
+    dolmen.app.layout
+    dolmen.app.content
+    dolmen.app.container
+    fanstatic
+    zope.fanstatic
+    p2.container
+    dolmen.blob
+    dolmen.content
+    dolmen.forms.base
+    dolmen.menu
+    dolmen.widget.image
+    hurry.jquery
+    hurry.jqueryui
+    hurry.zoperesource
+    z3c.jsonrpc
+    lxml
+    megrok.resource
+    megrok.z3ctable
+    menhir.contenttype.document
+    menhir.contenttype.folder
+#    menhir.contenttype.user
+    menhir.contenttype.privatefolder
+    menhir.simple.navtree
+#    gp.fileupload
+#    MySQL-python
+    Paste
+    PasteScript
+    PasteDeploy
+    PIL
+#    PILwoTk
+    p2.datashackle.core
+    p2.javascript
+    p2.windowmanager.layout
+    p2.windowmanager.skin
+    repoze.vhm
+    simplejson
+    sqlalchemy-migrate
+#    WSGIUtils
+    z3c.evalexception>=2.0
+    zope.app.form
+    zope.catalog
+    zope.errorview 
+    zope.login
+    zope.pluggableauth
+    zope.principalannotation
+    zope.session
+#test file upload
+    zope.app.file
+    zope.mimetype
+    p2.datashackle.management
+
+
+parts +=
+#    staticlxml
+#
+# for PIL imaging
+    zlib
+    libjpeg
+    PIL
+    site_zcml
+    zope_application
+    mkdirs
+    scripts
+    migratewrapper
+    zope_conf_debug
+    zope_conf_deploy
+    i18n
+    test
+    i18n_datashackle
+    debug_ini
+    deploy_ini
+    wsgi_app
+
+# set up our db:
+    initialize_db
+    create_postinstall_script
+#    exec_postinstall_script
+
+    fs_permissions
+#   sphinx
+    omelette
+
+
+
+versions=global_versions
+
+extends-cache = extends-cache
+
+# http://svn.zope.org/groktoolkit
+extends =      
+    http://gitweb.dolmen-project.org/misc.git?a=blob_plain;f=dolmen-kgs-0.6.2.cfg;hb=HEAD
+
+newest = false
+
+exec-sitecustomize = false
+include-site-packages = false
+
+# Re-check this
+# https://bugs.launchpad.net/zc.buildout/+bug/695980
+#eggs-directory = eggs
+
+#allow-picked-versions = false
+
+   
+#extensions = mr.developer buildout.dumppickedversions
+extensions = mr.developer
+always-checkout = false
+sources-dir=src
+sources = sources
+auto-checkout = 
+    menhir.simple.navtree
+    menhir.contenttype.privatefolder
+    p2.javascript
+    p2.windowmanager.layout
+    p2.windowmanager.skin
+    p2.datashackle.core
+    p2.container
+    p2.datashackle.management
+
+
+[sources]
+p2.javascript = git me@git.projekt-und-partner.de:p2.javascript.git
+p2.windowmanager.layout = git me@git.projekt-und-partner.de:p2.windowmanager.layout.git 
+p2.windowmanager.skin = git me@git.projekt-und-partner.de:p2.windowmanager.skin.git
+p2.datashackle.core = git me@git.projekt-und-partner.de:p2.datashackle.core.git
+p2.container = git me@git.projekt-und-partner.de:p2.container.git
+p2.datashackle.management = git me@git.projekt-und-partner.de:p2.datashackle.management.git 
+
+# Authenticated example:  gitosis@devel.dolmen-project.org:menhir.contenttype.image.git
+#
+# Anonymous git access
+# dolmen.authentication          = git git://devel.dolmen-project.org/dolmen.authentication.git  tag=pre-1.0
+#node-jsonrpc                   = git https://github.com/andris9/node-jsonrpc.git path=src/node/modules egg=false
+
+menhir.simple.navtree          = git git://devel.dolmen-project.org/menhir.simple.navtree.git
+menhir.contenttype.privatefolder = git git://devel.dolmen-project.org/menhir.contenttype.privatefolder.git
+
+
+
+[zlib]
+recipe          = hexagonit.recipe.cmmi
+url             = http://zlib.net/zlib-1.2.5.tar.gz
+md5hash         = c735eab2d659a96e5a594c9e8541ad63
+make-targets    = install
+
+[libjpeg]
+recipe          = hexagonit.recipe.cmmi
+url             = http://www.ijg.org/files/jpegsrc.v8.tar.gz
+configure-options = CFLAGS="-fPIC -I$${zlib:location}/include -L$${zlib:location}/lib"
+make-targets    = install
+ignore-existing = false
+
+[PIL]
+recipe          = zc.recipe.egg:custom
+egg             = PIL==1.1.7
+find-links      = http://dist.plone.org/thirdparty/
+index           = http://example.com/ignore/me
+#python          = python
+include-dirs    = $${libjpeg:location}/include
+library-dirs    = $${libjpeg:location}/lib
+#                  $${python:lib}
+rpath           = $${libjpeg:location}/lib
+#                  $${python:lib}
+
+[scripts]
+recipe = zc.recipe.egg
+eggs = $${buildout:eggs}
+interpreter = python-console
+
+[mkdirs]
+recipe = z3c.recipe.mkdir
+paths =
+    $${zope_conf:filestorage}
+    $${zope_conf:logfiles}
+    $${zope_conf:blobstorage}
+
+
+[zope3]
+location=
+
+[zope_application]
+#recipe = zc.zope3recipes:app
+recipe = z3c.recipe.scripts
+eggs = ${package}
+
+[site_zcml]
+recipe = collective.recipe.template
+input = etc/site.zcml.in
+output = $${buildout:parts-directory}/etc/site.zcml
+
+
+[zope_conf]
+input = etc/zope.conf.in
+filestorage = $${buildout:directory}/var/filestorage
+blobstorage = $${buildout:directory}/var/blobstorage
+logfiles = $${buildout:directory}/var/log
+extra =
+    <product-config setmanager>
+        db_provider $${database:provider}
+        db_host $${database:host}
+        db_name $${database:name}
+        db_user $${database:user}
+        db_password $${database:password}
+        node_host $${nodejs:host}
+        node_port $${nodejs:port}
+        node_root $${nodejs:root}
+        nodeserver_scripting $${nodejs:scripting}
+        buildout_root $${buildout:directory}
+    </product-config> 
+
+[zope_conf_debug]
+<= zope_conf
+recipe = collective.recipe.template
+output = $${buildout:parts-directory}/etc/zope.debug.conf
+devmode = on
+
+
+[zope_conf_deploy]
+<= zope_conf
+recipe = collective.recipe.template
+output = $${buildout:parts-directory}/etc/zope.deploy.conf
+devmode = off
+
+#[instance]
+#recipe = collective.recipe.template
+#input = etc/zope.conf.in
+#output = $${buildout:parts-directory}/etc/zope.conf
+#filestorage = $${buildout:directory}/var/filestorage
+#blobstorage = $${buildout:directory}/var/blobstorage
+#extra =
+#    <product-config setmanager>
+#        db_provider $${database:provider}
+#        db_host $${database:host}
+#        db_name $${database:name}
+#        db_user $${database:user}
+#        db_password $${database:password}
+#        node_host $${nodejs:host}
+#        node_port $${nodejs:port}
+#        node_root $${nodejs:root}
+#        nodeserver_scripting $${nodejs:scripting}
+#        buildout_root $${buildout:directory}
+#    </product-config> 
+
+[i18n]
+recipe = z3c.recipe.i18n:i18n
+packages = p2.datashackle.core
+eggs = p2.datashackle.core
+domain = p2.datashackle.core
+output = src/p2.datashackle.core/src/p2/datashackle/core/locales
+zcml = 
+
+# This is our wrapper script for the sqlalchemy database upgrader/downgrader
+[migratewrapper]
+recipe = collective.recipe.template
+input = etc/sqlversioning.py.in
+output = $${buildout:bin-directory}/sqlversioning.py
+mode = 775
+
+[initialize_db]
+recipe = collective.recipe.template
+input = etc/initializedb.py.in
+output = $${buildout:bin-directory}/initializedb.py
+mode = 775
+
+[create_postinstall_script]
+recipe = collective.recipe.template
+input = etc/postinstall.py.in
+output = $${buildout:bin-directory}/postinstall.py
+
+# Our postinstall script which initializes SQLAlchemy and gets our migrate script (and sets some file access rights)
+#[exec_postinstall_script]
+#recipe = collective.recipe.cmd:py
+#on_install=true
+#cmds = execfile("$${buildout:bin-directory}/postinstall.py")
+
+[test]
+recipe = zc.recipe.testrunner
+eggs = $${buildout:eggs}
+defaults = ['--tests-pattern', '^f?tests$$', '-v']
+
+[omelette]
+recipe = collective.recipe.omelette
+eggs = $${buildout:eggs}
+location = $${buildout:directory}/omelette
+
+[sphinx]
+recipe = collective.recipe.sphinxbuilder
+
+[fs_permissions]
+recipe = collective.recipe.cmd
+on_install=true
+on_update=false
+cmds = 
+    chmod 775 $${buildout:directory}/var/blobstorage
+    chmod 775 $${buildout:directory}/var/filestorage
+    chmod 775 $${buildout:directory}/var/log
+
+
+[i18n_datashackle]
+recipe = z3c.recipe.i18n:i18n
+packages = ${package}
+eggs = ${package}
+domain = ${package}
+output = src/${package}/src/p2/datashackle/locales
+zcml = 
+
+[debug_ini]
+recipe = collective.recipe.template
+input = etc/debug.ini.in
+output = $${buildout:parts-directory}/etc/debug.ini  
+host = 127.0.0.1
+port = 8080
+
+[deploy_ini]
+recipe = collective.recipe.template
+input = etc/production.ini.in
+output = $${buildout:parts-directory}/etc/production.ini  
+host = 127.0.0.1
+port = 8080
+
+[wsgi_app]
+recipe = collective.recipe.modwsgi
+eggs = $${buildout:eggs}
+config-file = $${buildout:parts-directory}/etc/production.ini
+

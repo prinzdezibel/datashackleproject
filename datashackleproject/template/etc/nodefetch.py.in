@@ -1,0 +1,41 @@
+#!/usr/bin/python
+# Retrieve the node package and extract it
+
+import urllib, tarfile, shutil, os, os.path, sys
+
+filename = "${nodeurl}"
+p = filename.find("/");
+while p >= 0:
+    filename = filename[p+1:]
+    p = filename.find("/")
+
+dirname = filename
+p = dirname.rfind(".tar")
+if p > 0:
+    dirname = dirname[:p]
+
+print "[node fetch] Filename: " + filename
+print "[node fetch] Extract dir: ${buildout:parts-directory}/" + dirname
+print "[node fetch] Url: ${nodeurl}"
+
+# cancel if old node dir is present
+if os.path.isdir("${buildout:parts-directory}/node/"):
+    print "[node fetch] Node already present - if you want to update, remove the directory ${buildout:parts-directory}/node/"
+    sys.exit()
+
+# now get archive
+print "[node fetch] Downloading..."
+urllib.urlretrieve("${nodeurl}", "${buildout:parts-directory}/" + filename)
+urllib.urlcleanup()
+
+# extract
+print "[node fetch] Extracting..."
+archive = tarfile.open("${buildout:parts-directory}/" + filename, "r")
+archive.extractall("${buildout:parts-directory}")
+archive.close()
+os.remove("${buildout:parts-directory}/" + filename) # remove archive
+
+# move extract dir to /node/ dir
+print "[node fetch] Renaming..."
+os.rename("${buildout:parts-directory}/" + dirname, "${buildout:parts-directory}/node/")
+print "[node fetch] node dir has been (re)created"

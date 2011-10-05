@@ -1,0 +1,7 @@
+* Allow creating projects with dotted names.
+  See https://bugs.launchpad.net/grok/+bug/223560
+
+* Make a template for megrok.something
+
+* Make tests run under Windows
+

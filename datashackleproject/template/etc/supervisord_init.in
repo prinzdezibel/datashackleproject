@@ -1,0 +1,123 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Requires:          dpkg
+# Provides:          supervisord
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: initscript for supervisord at ${buildout:bin-directory}
+# Description:       This file should be used to construct scripts to be
+#                    placed in /etc/init.d.
+#
+#
+# To install it in init.d do:
+# $ cd /etc/init.d
+# $ sudo ln -s /path/to/buildout/bin/supervisord_rc my_preferred_service_name
+# $ sudo updated-rc.d my_preferred_service_name defaults
+#
+#  Return value:
+#   0 if success
+#   1 if action failed
+#
+### END INIT INFO
+
+# Do NOT "set -e"
+#set -e
+
+  
+# PATH should only include /usr/* if it runs after the mountnfs.sh script
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/opt/local/sbin
+DESC="Start/Stop supervisord at ${buildout:bin-directory}"
+NAME=supervisord
+DAEMON=${buildout:bin-directory}/$NAME
+#DAEMON_ARGS="-c ${buildout:bin-directory}/../parts/supervisor/supervisord.conf"
+DAEMON_ARGS=""
+PIDFILE=${buildout:directory}/var/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+# Account that will be used to run supervisord daemon. (Apache requires root privileges, as it binds to port 80)
+OWNER=root
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+    
+if [ "`id -un`" != "root" ] ; then
+    echo "You need to be root to use supervisord.  Try sudo."
+    exit 1
+fi
+
+case "$1" in
+  start)
+        
+        echo "Starting daemon: "$NAME
+        start-stop-daemon --start  --exec $DAEMON \
+            --user $OWNER --name $NAME --pidfile $PIDFILE -- $DAEMON_ARGS \
+            || exit 1
+        
+        echo "."
+    ;;
+  stop)
+        echo "Stopping daemon: "$NAME
+        start-stop-daemon --stop --user $OWNER --pidfile $PIDFILE \
+            || exit 1
+        
+        # Many daemons don't delete their pidfiles when they exit.
+        rm -f $PIDFILE
+    ;;
+  restart)
+        echo "Restarting daemon: "$NAME
+        start-stop-daemon --stop \
+            --user $OWNER --pidfile $PIDFILE \
+            || exit 1
+        
+        # Many daemons don't delete their pidfiles when they exit.
+        rm -f $PIDFILE
+        echo "Daemon stopped."
+        start-stop-daemon --start  --exec $DAEMON \
+            --user $OWNER --name $NAME --pidfile $PIDFILE -- $DAEMON_ARGS \
+            || exit 1
+        echo "Daemon started."
+    ;;
+
+  *)
+    echo "Usage: "$1" {start|stop|restart}"
+    exit 1
+esac
+
+exit 0
+
+
+
+function startdaemon {
+    #   0 if daemon has been started
+    #   1 if daemon was already running
+    #   2 if daemon could not be started
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --user $OWNER --test > /dev/null \
+      || return 1
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON --user $OWNER -- \
+      $DAEMON_ARGS \
+      || return 2
+      
+    # Add code here, if necessary, that waits for the process to be ready
+    #   1 if daemon was already stopped
+    #   2 if daemon could not be stopped
+    #   other if a failure occurred
+    start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --user $OWNER --name $NAME
+    RETVAL="$?"
+    [ "$RETVAL" = 2 ] && return 2
+    
+    # Wait for children to finish too if this is a daemon that forks
+    # that waits for the process to drop all resources that could be
+    # needed by services started subsequently.  A last resort is to
+    # sleep for some time.
+    #start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5  --user $OWNER --exec $DAEMON
+    #[ "$?" = 2 ] && return 2
+    # Many daemons don't delete their pidfiles when they exit.
+    rm -f $PIDFILE
+    # restarting (for example, when it is sent a SIGHUP),
+    # then implement that here.
+    #
+    #start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE  --user $OWNER --name $NAME
+    return 0
+}
+

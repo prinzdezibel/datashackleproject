@@ -1,0 +1,54 @@
+#!/usr/bin/python
+# Post-install, running after first buildout installation
+#  -Creates the sql alchemy versioning wrapper (which contains database settings of buildout.cfg)
+
+import sys;
+import os
+import subprocess;
+import shutil,stat;
+
+print("Setting up database versioning scripts...")
+def initializeMigrate():
+    repository_path = "${buildout:directory}/${sqlalchemy_migrate:repository_path}"
+    lastSlash = repository_path.rfind('/')
+    repository_folder = repository_path[lastSlash + 1:]
+    repository_parentdir = repository_path[:lastSlash + 1]
+    
+    print("1/7: Rename old directory")
+    os.rename(repository_parentdir + repository_folder + "/",repository_parentdir + repository_folder + ".renamed/")
+    
+    print("2/7: Create migrate repository")
+    cmd = "bin/migrate create " + repository_path + " ${sqlalchemy_migrate:repository_id} --version_table=${sqlalchemy_migrate:version_table}"
+    print "\t" + cmd
+    os.system(cmd);
+    
+    print("3/7: Create table '${sqlalchemy_migrate:version_table}'")
+    cmd = "bin/python-console bin/initializedb.py mysql ${database:host} ${database:name} ${database:user} ${database:password}"
+    cmd2 = "bin/python-console bin/initializedb.py mysql ${database:host} ${database:name} ${database:user} <password>"
+    print "\t" + cmd2
+    os.system(cmd)
+    
+    # The following can be done to create an extended manage.py
+    # with configuration settings like databse url and repository path
+    # (Note: A plain version of manage.py which is already
+    # there, because migrate create brings it for us)  
+    #cmd = "bin/migrate manage " + repository_path + "/manage.py --repository=${sqlalchemy_migrate:repository_path} --url=mysql://${database:user}:${database:password}@${database:host}/${database:name}"   
+    
+    print("4/7: Copy files.")
+    shutil.copy(repository_parentdir + repository_folder + "/manage.py", repository_parentdir + repository_folder + ".renamed/manage.py")
+    shutil.copy(repository_parentdir + repository_folder + "/migrate.cfg", repository_parentdir + repository_folder + ".renamed/migrate.cfg")
+    
+    print("5/7: Remove temporary folder.")
+    shutil.rmtree(repository_parentdir + repository_folder + "/")
+    
+    print("6/7 Restore old directory")
+    os.rename(repository_parentdir + repository_folder + ".renamed/",repository_parentdir + repository_folder + "/")
+    
+    print("7/7: Set chmod +x on manage.py")
+    os.chmod(repository_parentdir + repository_folder + "/manage.py",0774)
+    
+	
+initializeMigrate()
+
+print("Doing an upgrade to step to the latest DB schema version...")
+os.system("bin/sqlversioning.py upgrade")

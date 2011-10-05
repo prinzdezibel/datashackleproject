@@ -1,0 +1,324 @@
+Grokproject tests
+=================
+
+Go to a fresh test directory:
+
+    >>> cd(testdir)
+
+Eggs are placed in our freshly created eggs directory:
+
+    >>> import os.path
+    >>> # Use a specific grok version, because 'current' will change at some
+    >>> # point in the future.
+    >>> executable = [os.path.join(current_dir, 'bin', 'grokproject')]
+    >>> opts = ['--user=a', '--passwd=a', '--eggs-dir=' + eggsdir]
+    >>> opts += ['--version-url=http://grok.zope.org/releaseinfo/1.3/versions.cfg']
+    >>> sh(executable + opts + ['GrokExample'])
+    ['...grokproject',
+     '--user=a',
+     '--passwd=a',
+     '--eggs-dir=...grokproject-test-eggs',
+     '--version-url=http://grok.zope.org/releaseinfo/1.3/versions.cfg',
+     'GrokExample']...
+    Creating directory '...bin'.
+    Creating directory '...parts'.
+    Creating directory '...develop-eggs'.
+    ...
+    Develop: '...GrokExample...'
+    ...
+    Generated script '...paster'.
+    Generated interpreter '...python-console'.
+    Installing daemon.
+    Generated script '...daemon'.
+    Installing paster_ini_debug.
+    Installing paster_ini_deploy.
+    Installing i18n.
+    i18n: setting up i18n tools
+    Generated script '...i18nextract'.
+    Generated script '...i18nmergeall'.
+    Generated script '...i18nstats'.
+    Generated script '...i18ncompile'.
+    Installing mkdirs.
+    mkdirs: created path: ...var
+    mkdirs: created path: ...filestorage
+    mkdirs: created path: ...log
+    mkdirs: created path: ...blobstorage
+    Installing site_zcml.
+    Installing test.
+    Generated script '...test'.
+    Installing zope_conf_debug.
+    ...
+    Installing zope_conf_deploy.
+    ...
+    Installing zpasswd.
+    Generated script '...zpasswd'.
+    Installing interactive_debugger.
+    Generated script '...interactive_debugger'.
+    Installing data.
+    Installing log.
+    *************** PICKED VERSIONS ****************
+    [versions]
+    <BLANKLINE>
+    *************** /PICKED VERSIONS ***************
+    Creating directory ...GrokExample
+    Running ...bootstrap.py...
+    Running ...buildout...
+    <BLANKLINE>
+
+Let's check the contents:
+
+    >>> package_dir = os.path.join(testdir, 'GrokExample')
+    >>> print open(os.path.join(package_dir, 'buildout.cfg')).read()
+    [buildout]
+    extends = http://grok.zope.org/releaseinfo/1.3/versions.cfg
+    extends-cache = extends-cache
+    include-site-packages = false
+    develop = .
+    ...
+
+    >>> ls(package_dir)
+    .installed.cfg
+    bin
+    bootstrap.py
+    buildout.cfg
+    develop-eggs
+    etc
+    extends-cache
+    log
+    parts
+    setup.py
+    src
+    var
+
+    >>> software_dir = os.path.join(package_dir, 'src', 'grokexample')
+    >>> ls(software_dir)
+    __init__.py
+    app.py
+    app_templates
+    configure.zcml
+    resource.py
+    static
+    tests
+
+    >>> bin_dir = os.path.join(package_dir, 'bin')
+    >>> ls(bin_dir)
+    buildout
+    daemon
+    i18ncompile
+    i18nextract
+    i18nmergeall
+    i18nstats
+    interactive_debugger
+    paster
+    python-console
+    test
+    zpasswd
+
+    >>> etc_dir = os.path.join(package_dir, 'parts', 'etc')
+    >>> ls(etc_dir)
+    debug.ini
+    deploy.ini
+    site.zcml
+    zope.debug.conf
+    zope.deploy.conf
+
+In the generated configuration files paths are set to local paths.
+We used a projectname with uppercase letters. This is respected by
+configuration files:
+
+    >>> cat(etc_dir, 'zope.debug.conf')
+    # Identify the component configuration used to define the site:
+    site-definition .../GrokExample/parts/etc/site.zcml
+    ...
+
+The eggs dir is filled now:
+
+    >>> len(os.listdir(eggsdir)) > 100
+    True
+
+The extends-cache directive results in cached versions of the referenced
+buildout files to support offline building. We know what the filename of the
+cached versions file for 1.3 will look like:
+
+    >>> ls(os.path.join(package_dir, 'extends-cache'))
+    0e528124e9df4d3fad02dfc68147586e
+    354ba68f51f74190b8bfdc3d2686b6fb
+    b88291ed0762c9dcbc55c7a7c7176bb1
+
+The password given is stored SSHA encoded:
+
+    >>> site_zcml_in = os.path.join(package_dir, 'etc',
+    ...                             'site.zcml.in')
+    >>> print open(site_zcml_in, 'rb').read()
+    <configure xmlns="http://namespaces.zope.org/zope"
+    ...
+        <principal id="zope.manager"
+                   title="Manager"
+                   login="a"
+                   password_manager="SSHA"
+                   password="{SSHA}..."
+                   />
+    ...
+
+
+Using i18n scripts
+------------------
+
+We can create a POT file out of our sources using the freshly
+generated `i18nextract`:
+
+    >>> cmd = os.path.join(bin_dir, 'i18nextract')
+    >>> output = read_sh(cmd)
+    >>> print output
+    domain:...'grokexample'
+    ...
+    output: '...grokexample.pot'
+
+The .pot file contains no specific entries right now. So let's add a
+source file with translatable content:
+
+    >>> source = """
+    ... from zope.i18nmessageid import MessageFactory
+    ... _ = MessageFactory('grokexample')
+    ...
+    ... class SomeClassWithI18nableContent(object):
+    ...   title = _(u'mytitle')
+    ...   description = _(u'description')
+    ...   name = _(u'name')
+    ... """
+    >>> source_path = os.path.join(software_dir, 'translatable.py')
+    >>> open(source_path, 'w').write(source)
+
+And rerun `bin/i18nextract`:
+
+    >>> cmd = os.path.join(bin_dir, 'i18nextract')
+    >>> output = read_sh(cmd)
+
+The translatable strings now appear in the generated .pot file:
+
+    >>> pot_file = os.path.join(software_dir, 'locales', 'grokexample.pot')
+    >>> print open(pot_file, 'r').read()
+    ####...
+    #: grokexample/translatable.py:6
+    msgid "mytitle"
+    msgstr ""
+    <BLANKLINE>
+    #: grokexample/translatable.py:7
+    msgid "description"
+    msgstr ""
+    <BLANKLINE>
+    #: grokexample/translatable.py:8
+    msgid "name"
+    msgstr ""
+
+Let's now create a translation for that (tiny) set of messages:
+
+    >>> trans_dir_de = os.path.join(software_dir, 'locales', 'de',
+    ...                            'LC_MESSAGES')
+    >>> os.makedirs(trans_dir_de)
+
+In this directory we create a copy of the original .pot file:
+
+    >>> po_file_path = os.path.join(trans_dir_de, 'grokexample.po')
+    >>> po_file = open(pot_file, 'r').read()
+
+We modify the translation to give some more interesting results:
+
+    >>> po_file = po_file.replace('translatable.py:7\n',
+    ...                           'translatable.py:7\n#, fuzzy\n')
+    >>> po_file = po_file.replace('"mytitle"\nmsgstr ""',
+    ...                           '"mytitle"\nmsgstr "Mein Titel"')
+    >>> po_file = po_file.replace('"name"\nmsgstr ""',
+    ...                           '"name"\nmsgstr "Name"')
+    >>> open(po_file_path, 'wb').write(po_file)
+
+We can merge all translations with bin/i18nmergeall:
+
+    >>> cmd = os.path.join(bin_dir, 'i18nmergeall')
+    >>> output = read_sh(cmd).split('\n')
+    >>> print output[1]
+    Merging language "de", domain "grokexample"
+
+We can see the status of translations calling bin/i18nstats:
+
+    >>> cmd = os.path.join(bin_dir, 'i18nstats')
+    >>> output = read_sh(cmd)
+    >>> print output
+    Language    Total    Done    Not Done    Fuzzy      Done %
+    ==========================================================
+    de              3       1           1        1     33.33 %
+
+
+Using the generated `test` script
+---------------------------------
+
+We can run tests:
+
+    >>> cmd = os.path.join(bin_dir, 'test')
+    >>> output = read_sh(cmd)
+    >>> print 'Test:\n' + output
+    Test:
+    Running tests at level 1
+    Running grokexample.tests.ZopeFanstaticBrowserLayer tests:
+      Set up grokexample.tests.ZopeFanstaticBrowserLayer... in ... seconds.
+      Running:
+    ..
+      Ran 2 tests with 0 failures and 0 errors in ... seconds.
+    Running zope.testrunner.layer.UnitTests tests:
+      Tear down grokexample.tests.ZopeFanstaticBrowserLayer in ... seconds.
+      Set up zope.testrunner.layer.UnitTests in ... seconds.
+      Running:
+    .
+      Ran 1 tests with 0 failures and 0 errors in ... seconds.
+    Tearing down left over layers:
+      Tear down zope.testrunner.layer.UnitTests in ... seconds.
+    Total: 3 tests, 0 failures, 0 errors in ... seconds.
+    <BLANKLINE>
+
+Using the generated `buildout` script
+-------------------------------------
+
+We can call the `buildout` script of the freshly generated
+project. For this to work, we have to switch to the project directory
+first:
+
+    >>> cd(package_dir)
+    >>> cmd = os.path.join(bin_dir, 'buildout')
+    >>> output = read_sh(cmd)
+    >>> print output
+    Develop: ...
+    Updating app.
+    Updating daemon.
+    Updating paster_ini_debug.
+    Updating paster_ini_deploy.
+    Updating i18n.
+    i18n: setting up i18n tools
+    Updating mkdirs.
+    Updating site_zcml.
+    Updating test.
+    Updating zope_conf_debug.
+    Updating zope_conf_deploy.
+    Updating zpasswd.
+    Updating interactive_debugger.
+    Updating data.
+    Updating log.
+    *************** PICKED VERSIONS ****************
+    [versions]
+    <BLANKLINE>
+    *************** /PICKED VERSIONS ***************
+    <BLANKLINE>
+
+Invalid project names
+---------------------
+
+We check for invalid project names:
+
+    >>> sh(executable + opts + ['360profile'])
+    [...]
+    Error: The chosen project name is not a valid package name: 360profile.
+    Please choose a different project name.
+
+    >>> sh(executable + opts + ['profile'])
+    [...]
+    Error: The package 'profile' is already on sys.path.
+    Please choose a different project name.

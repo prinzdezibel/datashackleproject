@@ -1,0 +1,81 @@
+
+#site-definition $${buildout:parts-directory}/etc/site.zcml
+site-definition $${site_zcml:output}
+
+# http://wiki.zope.org/zope3/DeveloperMode
+devmode $${devmode}
+
+<eventlog>
+      <logfile>
+        level all
+        formatter zope.exceptions.log.Formatter
+    	path $${zope_conf:logfiles}/z3.log
+      </logfile>
+
+# This sets up logging to to standard output.
+# The "path" setting can be the tokens STDOUT or STDERR
+#      <logfile>
+#         formatter zope.exceptions.log.Formatter
+#         path STDOUT
+#      </logfile>
+</eventlog>
+
+<zodb>
+  # Standard blob storage
+  <blobstorage>
+    blob-dir $${zope_conf:blobstorage}
+    <filestorage>
+      path $${zope_conf:filestorage}/Data.fs
+    </filestorage>
+  </blobstorage>
+
+
+# Uncomment this if you want to connect to a ZEO server instead:
+    #<zeoclient>
+    #     server 127.0.0.1:8081
+    #     cache-size 100MB
+    #     blob-dir $${zope_conf:blobstorage}
+    #</zeoclient>
+	
+	# Uncomment this if you want a blob-less standard file storage instead:
+	#  <filestorage>
+	#       path $${zope_conf:filestorage}
+	#  </filestorage>
+</zodb>
+
+#    <eventlog>
+#      level all
+#      <logfile>
+#        path $$INSTANCE/log/event.log
+#        level info
+#      </logfile>
+#      <logfile>
+#        path STDOUT
+#      </logfile>
+#    </eventlog>
+#
+#      <logger access>
+#        level WARN
+#        <logfile>
+#          path $$INSTANCE/log/Z2.log
+#        </logfile>
+#      </logger>
+#
+#      <logger trace>
+#        level WARN
+#        <logfile>
+#            path STDOUT
+#        </logfile>
+#       </logger>
+#      <syslog-handler>
+#        host localhost
+#        port 514
+#      </syslog-handler>
+#    </logger>
+
+
+# Extra configuration lines can be added to zope_conf's extra option. Put for
+# instance productconf sections in here.
+$${zope_conf:extra}
+
+

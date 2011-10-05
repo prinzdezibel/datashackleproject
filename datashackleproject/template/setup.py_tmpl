@@ -1,0 +1,33 @@
+from setuptools import setup, find_packages
+
+version = '${repr(version)|0.0}'
+
+setup(name=${repr(project)},
+      version=version,
+      description="${description|nothing}",
+      long_description="""\
+${long_description|nothing}""",
+      # Get strings from http://pypi.python.org/pypi?:action=list_classifiers
+      classifiers=[],
+      keywords=${repr(keywords)|empty},
+      author=${repr(author)|empty},
+      author_email=${repr(author_email)|empty},
+      url=${repr(url)|empty},
+      license=${repr(license_name)|empty},
+      package_dir={'': 'src'},
+      packages=find_packages('src'),
+      include_package_data=True,
+      zip_safe=${repr(bool(zip_safe))|False},
+      install_requires=['setuptools',
+                        'grok',
+                        'grokui.admin',
+                        'fanstatic',
+                        'zope.fanstatic',
+                        'grokcore.startup',${install_requires|nothing}
+                        # Add extra requirements here
+                        ],
+      entry_points={
+          'fanstatic.libraries': [
+              '${project_lowercase} = ${project_lowercase}.resource:library',
+          ]
+      })
