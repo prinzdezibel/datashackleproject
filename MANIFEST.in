@@ -1,0 +1,4 @@
+include *.txt
+recursive-include datashackleproject/template *
+prune MANIFEST.in
+prune tests.*

@@ -1,64 +1,42 @@
-grokproject provides an easy way to get started with a `Grok
-<http://pypi.python.org/pypi/grok>`_ web application.  Simply
-install ``grokproject``::
+datashackleproject sets up a skeleton for building datashackle web applications.
+In order to do so, we are approaching a `buildout-based <http://www.buildout.org>`_ installation.
 
-  $ easy_install grokproject
+The first thing to get started with a new datashackle project is to install
+the datashackleproject package, which provides a PasteScript template to create
+a buildout that sets up the environment for your new project::
 
-If you have an old version of grokproject installed then you can
-upgrade doing::
+  $ pip install datashackleproject
 
-  $ easy_install -U grokproject
-
-Afterwards you can run the ``grokproject`` script with the name of the
+Afterwards you can run the ``datashackle`` script with the name of the
 project you'd like to create as an argument::
 
-  $ grokproject MammothHerd
-  ... many lines of output here
+  $ paster create -t datashackle myFirstDatashackleApp
 
-This will not only create a project area for you to work in, it will
-also download and install Grok and its dependencies.
+You want to answer the questions when prompted. They are there to set intial
+project configuration values. These can be changed later again.
 
-After the project area has been created successfully, you will find an empty
-Python package "skeleton" in the ``src`` directory in which you can place the
-code for your web application.
+Change to your project directory::
 
-To start the application server, execute::
+  $ cd myFirstDatashackleApp
 
-  $ cd MammothHerd
-  $ bin/paster serve parts/etc/deploy.ini
+The next steps are optional. You may execute it if you experience problems
+with your python environment::
 
-Start/stop it in daemon mode::
+  $ virtualenv --no-site-packages .
+  $ source bin/activate
 
-  $ bin/daemon start/stop
+Bootstrap your buildout::
 
-There is also an Ajax enabled debugger (point your browser to
-http://localhost:8080/@@login.html when using this)::
+  $ python bootstrap.py
 
-  $ bin/paster serve parts/etc/debug.ini
-
-To start the interactive debugger prompt::
-
-  $ bin/interactive_debugger
-
-To run an ad-hoc Python script against a full setup application::
-
-  $ bin/interactive_debugger [name_of_python_script].py
-
-Python scripts run this way, will have access to a ``root``, ``debugger``, and
-an ``app`` object avaible for "interacting" with the application environment.
-
-For those who know paster: ``grokproject`` is just a wrapper around a
-paster template.  So instead of running the ``grokproject`` command,
-you can also run::
-
-  $ paster create -t grok MammotHerd
-
-All configuration files used for running Grok can be found in the
-``parts/etc/`` directory of your project. These configuration files are
-generated automatically from the templates in ``etc/`` on each ``buildout``
-run. To modify the configuration files edit the approriate templates in
-``etc/`` and rerun ``buildout`` afterwards::
+Now you can run the buildout::
 
   $ bin/buildout
 
-This will rebuild the files in ``parts/etc/``.
+Now you can start the newly created app. Ensure that the mysql server is 
+up and running::
+
+  $ bin/paster serve parts/etc/debug.ini
+
+
+Point your browser to ``http://localhost:8080``

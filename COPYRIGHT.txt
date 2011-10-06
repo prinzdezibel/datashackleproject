@@ -1,1 +1,1 @@
-Zope Foundation and Contributors
+Copyright (c) 2010 projekt-und-partner.de. All rights reserved.

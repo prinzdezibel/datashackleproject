@@ -1,4 +1,4 @@
-Grokproject tests
+Datashackleproject tests
 =================
 
 Go to a fresh test directory:
@@ -10,7 +10,7 @@ Eggs are placed in our freshly created eggs directory:
     >>> import os.path
     >>> # Use a specific grok version, because 'current' will change at some
     >>> # point in the future.
-    >>> executable = [os.path.join(current_dir, 'bin', 'grokproject')]
+    >>> executable = [os.path.join(current_dir, 'bin', 'datashackleproject')]
     >>> opts = ['--user=a', '--passwd=a', '--eggs-dir=' + eggsdir]
     >>> opts += ['--version-url=http://grok.zope.org/releaseinfo/1.3/versions.cfg']
     >>> sh(executable + opts + ['GrokExample'])
