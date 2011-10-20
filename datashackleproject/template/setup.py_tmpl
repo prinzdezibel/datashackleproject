@@ -28,6 +28,7 @@ ${long_description|nothing}""",
                         ],
       entry_points={
           'fanstatic.libraries': [
+              'management_styles = p2.datashackle.management:management_styles_library',  
               '${project_lowercase} = ${project_lowercase}.resource:library',
           ]
       })

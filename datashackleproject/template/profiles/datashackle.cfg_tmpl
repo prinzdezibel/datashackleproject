@@ -66,6 +66,7 @@ eggs +=
     zope.app.file
     zope.mimetype
     p2.datashackle.management
+    cssutils
 
 
 parts +=
@@ -219,11 +220,12 @@ extra =
         db_name $${database:name}
         db_user $${database:user}
         db_password $${database:password}
+        management_styles $${buildout:directory}/styles
         node_host $${nodejs:host}
         node_port $${nodejs:port}
         node_root $${nodejs:root}
         nodeserver_scripting $${nodejs:scripting}
-        buildout_root $${buildout:directory}
+        management_styles $${management:styles_path}
     </product-config> 
 
 [zope_conf_debug]

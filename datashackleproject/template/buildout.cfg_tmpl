@@ -3,6 +3,7 @@ extends=
         profiles/versions.cfg
         profiles/defaults.cfg
         profiles/datashackle.cfg
+
  
 [database]
 provider = mysql

@@ -15,3 +15,5 @@ repository_path = src/p2.datashackle.core/src/p2/datashackle/core/migrate_reposi
 version_table = p2_sqlmigrate
 repository_id = ${package}
 
+[management]
+styles_path = $${buildout:directory}/styles
