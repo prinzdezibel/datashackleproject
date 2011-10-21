@@ -24,7 +24,7 @@ long_description = (
 
 setup(
     name='datashackleproject',
-    version='0.1',
+    version='0.1.1',
     author='Michael Jenny',
     author_email='michael.jenny@projekt-und-partner.de',
     url='',

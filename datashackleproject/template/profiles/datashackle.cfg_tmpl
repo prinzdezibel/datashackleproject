@@ -8,6 +8,7 @@ develop =
     src/p2.container
     src/p2.datashackle.management
     src/menhir.contenttype.privatefolder
+    src/p2.datashackle.repository
 
 eggs +=
     ${package}
@@ -67,7 +68,7 @@ eggs +=
     zope.mimetype
     p2.datashackle.management
     cssutils
-
+    p2.datashackle.repository
 
 parts +=
 #    staticlxml

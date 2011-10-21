@@ -11,7 +11,7 @@ port = 8084
 host = localhost
 
 [sqlalchemy_migrate]
-repository_path = src/p2.datashackle.core/src/p2/datashackle/core/migrate_repository
+repository_path = src/p2.datashackle.repository/src/p2/datashackle/repository
 version_table = p2_sqlmigrate
 repository_id = ${package}
 
