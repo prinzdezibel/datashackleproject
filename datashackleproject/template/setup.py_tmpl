@@ -26,9 +26,11 @@ ${long_description|nothing}""",
                         'grokcore.startup',${install_requires|nothing}
                         # Add extra requirements here
                         ],
-      entry_points={
+       entry_points={
           'fanstatic.libraries': [
-              'management_styles = p2.datashackle.management:management_styles_library',  
-              '${project_lowercase} = ${project_lowercase}.resource:library',
-          ]
-      })
+          'sys_staticresource = p2.datashackle.management:sys_staticresource_library',
+          'user_styles = p2.datashackle.management:user_styles_library',
+          '${project_lowercase} = ${project_lowercase}.resource:library',
+           ]
+        }
+)

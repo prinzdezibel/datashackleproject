@@ -1,14 +1,14 @@
 [buildout]
 develop = 
     .
-    src/p2.javascript
-    src/p2.windowmanager.layout
-    src/p2.windowmanager.skin
-    src/p2.datashackle.core
-    src/p2.container
-    src/p2.datashackle.management
-    src/menhir.contenttype.privatefolder
-    src/p2.datashackle.repository
+    checkouts/p2.javascript
+    checkouts/p2.windowmanager.layout
+    checkouts/p2.windowmanager.skin
+    checkouts/p2.datashackle.core
+    checkouts/p2.container
+    checkouts/p2.datashackle.management
+    checkouts/menhir.contenttype.privatefolder
+    checkouts/p2.datashackle.repository
 
 eggs +=
     ${package}
@@ -63,7 +63,6 @@ eggs +=
     zope.pluggableauth
     zope.principalannotation
     zope.session
-#test file upload
     zope.app.file
     zope.mimetype
     p2.datashackle.management
@@ -125,8 +124,8 @@ include-site-packages = false
 #extensions = mr.developer buildout.dumppickedversions
 extensions = mr.developer
 always-checkout = false
-sources-dir=src
-sources = sources
+sources-dir=checkouts
+sources = checkouts
 auto-checkout = 
     menhir.simple.navtree
     menhir.contenttype.privatefolder
@@ -138,7 +137,7 @@ auto-checkout =
     p2.datashackle.management
 
 
-[sources]
+[checkouts]
 p2.javascript = git me@git.projekt-und-partner.de:p2.javascript.git
 p2.windowmanager.layout = git me@git.projekt-und-partner.de:p2.windowmanager.layout.git 
 p2.windowmanager.skin = git me@git.projekt-und-partner.de:p2.windowmanager.skin.git
@@ -226,7 +225,8 @@ extra =
         node_port $${nodejs:port}
         node_root $${nodejs:root}
         nodeserver_scripting $${nodejs:scripting}
-        management_styles $${management:styles_path}
+        sys_staticresource_path $${management:sys_staticresource_path}
+        user_styles_path $${management:user_styles_path}
     </product-config> 
 
 [zope_conf_debug]
