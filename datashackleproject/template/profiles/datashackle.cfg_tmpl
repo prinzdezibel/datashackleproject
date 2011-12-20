@@ -135,7 +135,7 @@ auto-checkout =
     p2.datashackle.core
     p2.container
     p2.datashackle.management
-
+    p2.datashackle.repository
 
 [checkouts]
 p2.javascript = git me@git.projekt-und-partner.de:p2.javascript.git
@@ -144,6 +144,7 @@ p2.windowmanager.skin = git me@git.projekt-und-partner.de:p2.windowmanager.skin.
 p2.datashackle.core = git me@git.projekt-und-partner.de:p2.datashackle.core.git
 p2.container = git me@git.projekt-und-partner.de:p2.container.git
 p2.datashackle.management = git me@git.projekt-und-partner.de:p2.datashackle.management.git 
+p2.datashackle.repository = git me@git.projekt-und-partner.de:p2.datashackle.repository.git 
 
 # Authenticated example:  gitosis@devel.dolmen-project.org:menhir.contenttype.image.git
 #
