@@ -12,3 +12,26 @@ user = ${db_user}
 password = ${db_password}
 host = ${db_host}
 
+
+##########################################################################################################
+# Supplementary configuration that may be needed depending which profiles are choosen above.
+# Overwrite settings from defaults.cfg here to match your environment.
+##########################################################################################################
+
+# Turn scripting on , if you need nodejs scripting capabilities.
+# [nodejs]
+# scripting = On
+
+# only necessary if extending supervisor.cfg
+[supervisord]
+mysql_dir = /Applications/XAMPP/xamppfiles/var/mysql
+mysql_pid_file = $${supervisord:mysql_dir}/mysqld.pid
+programs =  
+            10 apache (startsecs=5 stopsignal=TERM startretries=1) /Applications/XAMPP/xamppfiles/bin/httpd [-D JUSTTOMAKEAPXSHAPPY -c "ErrorLog /dev/stdout" -E /Applications/XAMPP/xamppfiles/logs/error_log -k start -DFOREGROUND] true root
+            20 mysql (startsecs=10 stopsignal=TERM startretries=1) $${buildout:directory}/bin/pidproxy.py [$${supervisord:mysql_pid_file} /Applications/XAMPP/xamppfiles/bin/mysqld_safe --datadir=$${supervisord:mysql_dir} --pid-file=$${supervisord:mysql_pid_file}] true
+#    30 nodejs $${buildout:bin-directory}/node true
+#    40 datashackle (startsecs=20 stopsignal=TERM startretries=1) $${buildout:bin-directory}/paster [serve $${buildout:directory}/parts/etc/debug.ini] $${buildout:directory} true
+    
+# eventlisteners =
+#   SolrHttpOk TICK_60 $${buildout:bin-directory}/httpok [-p solr -t 20 http://localhost/solr/]
+
