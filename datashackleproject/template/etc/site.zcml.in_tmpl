@@ -36,7 +36,6 @@
              principal="zope.manager" />
     </configure>
     
-    <!-- include package="p2.datashackle.core" file="meta.zcml" / -->
     <include package="p2.container" file="meta.zcml" /> 
 
     <include package="megrok.resource" />

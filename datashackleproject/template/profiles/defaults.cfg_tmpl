@@ -11,10 +11,10 @@ port = 8084
 host = localhost
 
 [sqlalchemy_migrate]
-repository_path = src/p2.datashackle.repository/src/p2/datashackle/repository
+repository_path = checkouts/p2.datashackle.repository/src/p2/datashackle/repository
 version_table = p2_sqlmigrate
 repository_id = ${package}
 
 [management]
-sys_staticresource_path = $${buildout:directory}/src/p2.datashackle.management/src/p2/datashackle/management/static
+sys_staticresource_path = $${buildout:directory}/checkouts/p2.datashackle.management/src/p2/datashackle/management/static
 user_styles_path = $${buildout:directory}/src/landpuls/de/static/backend_styles

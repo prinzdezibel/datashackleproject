@@ -33,4 +33,4 @@ if (len(sys.argv) == 3):
 else:
     if (sys.argv[1].lower() == "downgrade"):
         upgradeto = " " + "0"
-subprocess.call("${buildout:directory}/bin/python-console ${buildout:directory}/${sqlalchemy_migrate:repository_path}/manage.py " + sys.argv[1].lower() + " mysql://" + db_user + ":" + db_password + "@" + db_host + "/" + db_name + " ${buildout:directory}/${sqlalchemy_migrate:repository_path}" + upgradeto + " --user-styles-path=${management:user_styles_path}" + " --sys-staticresource-path=${management:sys_staticresource_path}/models", shell=True)
+subprocess.call("${buildout:directory}/bin/python-console ${buildout:directory}/${sqlalchemy_migrate:repository_path}/manage.py " + sys.argv[1].lower() + " mysql://" + db_user + ":" + db_password + "@" + db_host + "/" + db_name + " ${buildout:directory}/${sqlalchemy_migrate:repository_path}" + upgradeto + " --user-styles-path=${management:user_styles_path}" + " --sys-staticresource-path=${management:sys_staticresource_path}", shell=True)
