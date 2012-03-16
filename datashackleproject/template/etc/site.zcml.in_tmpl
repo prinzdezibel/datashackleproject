@@ -60,7 +60,6 @@
 
     <include package="dolmen.menu" />
  
-    <include package="p2.javascript" />
     <include package="p2.windowmanager.layout" />
     <include package="p2.windowmanager.skin" />
  

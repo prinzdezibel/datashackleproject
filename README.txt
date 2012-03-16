@@ -12,6 +12,9 @@ use another linux disto::
   $ sudo apt-get install python-virtualenv python-dev libxslt-dev libxml2-dev
   $ sudo apt-get install python-pip libmysqlclient-dev 
 
+Install PasteScript::
+  $ pip install PasteScript
+
 **Installation and usage of datashackleproject**
 
 The first thing to get started with a new datashackle project is to install

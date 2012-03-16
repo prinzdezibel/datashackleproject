@@ -1,7 +1,6 @@
 [buildout]
 develop = 
     .
-    checkouts/p2.javascript
     checkouts/p2.windowmanager.layout
     checkouts/p2.windowmanager.skin
     checkouts/p2.datashackle.core
@@ -61,7 +60,6 @@ eggs +=
     p2.datashackle.core
     p2.datashackle.management
     p2.datashackle.repository
-    p2.javascript
     p2.windowmanager.layout
     p2.windowmanager.skin
 
@@ -76,7 +74,6 @@ parts +=
     zope_application
     mkdirs
     scripts
-    migratewrapper
     zope_conf_debug
     zope_conf_deploy
     i18n
@@ -116,7 +113,6 @@ sources = checkouts
 auto-checkout = 
     menhir.simple.navtree
     menhir.contenttype.privatefolder
-    p2.javascript
     p2.windowmanager.layout
     p2.windowmanager.skin
     p2.datashackle.core
@@ -125,7 +121,6 @@ auto-checkout =
     p2.datashackle.repository
 
 [checkouts]
-p2.javascript = git me@git.projekt-und-partner.de:p2.javascript.git
 p2.windowmanager.layout = git me@git.projekt-und-partner.de:p2.windowmanager.layout.git 
 p2.windowmanager.skin = git me@git.projekt-und-partner.de:p2.windowmanager.skin.git
 p2.datashackle.core = git me@git.projekt-und-partner.de:p2.datashackle.core.git
@@ -146,8 +141,8 @@ menhir.contenttype.privatefolder = git git://devel.dolmen-project.org/menhir.con
 
 [zlib]
 recipe          = hexagonit.recipe.cmmi
-url             = http://zlib.net/zlib-1.2.5.tar.gz
-md5hash         = c735eab2d659a96e5a594c9e8541ad63
+url             = http://zlib.net/zlib-1.2.6.tar.gz
+md5hash         = 618e944d7c7cd6521551e30b32322f4a
 make-targets    = install
 
 [libjpeg]
@@ -307,5 +302,5 @@ recipe = zc.recipe.egg
 eggs = p2.datashackle.repository
   
 entry-points = migrate=p2.datashackle.repository.manage:main
-arguments = url='mysql://${database:user}:${database:password}@${database:host}/${database:name}',
-    repository='${buildout:directory}/checkouts/p2.datashackle.repository/src/p2/datashackle/repository'
+arguments = url='mysql://$${database:user}:$${database:password}@$${database:host}/$${database:name}',
+    repository='$${buildout:directory}/checkouts/p2.datashackle.repository/src/p2/datashackle/repository'
