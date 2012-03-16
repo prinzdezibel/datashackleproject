@@ -10,8 +10,6 @@ from zope.pluggableauth import PluggableAuthentication as PAU
 from zope.app.wsgi import config
 from zope.app.wsgi.interfaces import WSGIPublisherApplicationCreated
 from zope.component import getUtility
-from zope.principalannotation.utility import PrincipalAnnotationUtility
-from zope.principalannotation.interfaces import IPrincipalAnnotationUtility
 from zope.app.appsetup.interfaces import IDatabaseOpenedWithRootEvent
 
 from p2.datashackle.core.interfaces import IDbUtility

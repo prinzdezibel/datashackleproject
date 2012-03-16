@@ -13,8 +13,6 @@ develop =
 eggs +=
     ${package}
     chameleon.zpt
-# sqlalchemy-migrate requires decorator    
-    decorator
     dolmen.app.authentication
     dolmen.app.site
     dolmen.app.layout
@@ -28,10 +26,8 @@ eggs +=
     dolmen.forms.base
     dolmen.menu
     dolmen.widget.image
-    hurry.jquery
-    hurry.jqueryui
-    hurry.zoperesource
-    z3c.jsonrpc
+    js.jquery
+    js.jqueryui
     lxml
     megrok.resource
     megrok.z3ctable
@@ -41,16 +37,12 @@ eggs +=
     menhir.contenttype.privatefolder
     menhir.simple.navtree
 #    gp.fileupload
-#    MySQL-python
+    MySQL-python
     Paste
     PasteScript
     PasteDeploy
     PIL
 #    PILwoTk
-    p2.datashackle.core
-    p2.javascript
-    p2.windowmanager.layout
-    p2.windowmanager.skin
     repoze.vhm
     simplejson
     sqlalchemy-migrate
@@ -65,9 +57,13 @@ eggs +=
     zope.session
     zope.app.file
     zope.mimetype
+    p2.container
+    p2.datashackle.core
     p2.datashackle.management
-    cssutils
     p2.datashackle.repository
+    p2.javascript
+    p2.windowmanager.layout
+    p2.windowmanager.skin
 
 parts +=
 #    staticlxml
@@ -89,17 +85,8 @@ parts +=
     debug_ini
     deploy_ini
     wsgi_app
-
-# set up our db:
-    initialize_db
-    create_postinstall_script
-#    exec_postinstall_script
-
-    fs_permissions
-#   sphinx
     omelette
-
-
+    migrate
 
 versions=global_versions
 
@@ -271,29 +258,6 @@ domain = p2.datashackle.core
 output = src/p2.datashackle.core/src/p2/datashackle/core/locales
 zcml = 
 
-# This is our wrapper script for the sqlalchemy database upgrader/downgrader
-[migratewrapper]
-recipe = collective.recipe.template
-input = etc/sqlversioning.py.in
-output = $${buildout:bin-directory}/sqlversioning.py
-mode = 775
-
-[initialize_db]
-recipe = collective.recipe.template
-input = etc/initializedb.py.in
-output = $${buildout:bin-directory}/initializedb.py
-mode = 775
-
-[create_postinstall_script]
-recipe = collective.recipe.template
-input = etc/postinstall.py.in
-output = $${buildout:bin-directory}/postinstall.py
-
-# Our postinstall script which initializes SQLAlchemy and gets our migrate script (and sets some file access rights)
-#[exec_postinstall_script]
-#recipe = collective.recipe.cmd:py
-#on_install=true
-#cmds = execfile("$${buildout:bin-directory}/postinstall.py")
 
 [test]
 recipe = zc.recipe.testrunner
@@ -308,14 +272,6 @@ location = $${buildout:directory}/omelette
 [sphinx]
 recipe = collective.recipe.sphinxbuilder
 
-[fs_permissions]
-recipe = collective.recipe.cmd
-on_install=true
-on_update=false
-cmds = 
-    chmod 775 $${buildout:directory}/var/blobstorage
-    chmod 775 $${buildout:directory}/var/filestorage
-    chmod 775 $${buildout:directory}/var/log
 
 
 [i18n_datashackle]
@@ -345,3 +301,11 @@ recipe = collective.recipe.modwsgi
 eggs = $${buildout:eggs}
 config-file = $${buildout:parts-directory}/etc/production.ini
 
+
+[migrate]
+recipe = zc.recipe.egg
+eggs = p2.datashackle.repository
+  
+entry-points = migrate=p2.datashackle.repository.manage:main
+arguments = url='mysql://${database:user}:${database:password}@${database:host}/${database:name}',
+    repository='${buildout:directory}/checkouts/p2.datashackle.repository/src/p2/datashackle/repository'
