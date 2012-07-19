@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+VERSION = '0.1.2'
+
 _description = (
     "Script that creates a Datashackle skeleton for "
     "a new Datashackle web application."
@@ -24,7 +26,7 @@ long_description = (
 
 setup(
     name='datashackleproject',
-    version='0.1.1',
+    version=VERSION,
     author='Michael Jenny',
     author_email='michael.jenny@projekt-und-partner.de',
     url='',

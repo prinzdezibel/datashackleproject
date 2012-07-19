@@ -28,6 +28,9 @@ eggs +=
     js.jquery
     js.jqueryui
     lxml
+    grok
+    grokcore.startup
+    grokui.admin
     megrok.resource
     megrok.z3ctable
     menhir.contenttype.document
@@ -50,6 +53,7 @@ eggs +=
     zope.app.form
     zope.catalog
     zope.errorview 
+    zope.fanstatic
     zope.login
     zope.pluggableauth
     zope.principalannotation
@@ -128,13 +132,14 @@ p2.container = git me@git.projekt-und-partner.de:p2.container.git
 p2.datashackle.management = git me@git.projekt-und-partner.de:p2.datashackle.management.git 
 p2.datashackle.repository = git me@git.projekt-und-partner.de:p2.datashackle.repository.git 
 
+menhir.simple.navtree          = git me@git.projekt-und-partner.de:menhir.simple.navtree.git
+
 # Authenticated example:  gitosis@devel.dolmen-project.org:menhir.contenttype.image.git
 #
 # Anonymous git access
 # dolmen.authentication          = git git://devel.dolmen-project.org/dolmen.authentication.git  tag=pre-1.0
 #node-jsonrpc                   = git https://github.com/andris9/node-jsonrpc.git path=src/node/modules egg=false
 
-menhir.simple.navtree          = git git://devel.dolmen-project.org/menhir.simple.navtree.git
 menhir.contenttype.privatefolder = git git://devel.dolmen-project.org/menhir.contenttype.privatefolder.git
 
 
@@ -208,8 +213,6 @@ extra =
         node_port $${nodejs:port}
         node_root $${nodejs:root}
         nodeserver_scripting $${nodejs:scripting}
-        sys_staticresource_path $${management:sys_staticresource_path}
-        user_styles_path $${management:user_styles_path}
     </product-config> 
 
 [zope_conf_debug]
