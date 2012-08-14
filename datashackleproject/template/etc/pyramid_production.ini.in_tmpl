@@ -9,7 +9,11 @@ pyramid.default_locale_name = en
 pyramid.includes =
     pyramid_tm
 
-sqlalchemy.url = sqlite:///%(here)s/${package}.db
+datashackle.db_provider = $${database:provider}
+datashackle.db_host = $${database:host}
+datashackle.db_name = $${database:name}
+datashackle.db_user = $${database:user}
+datashackle.db_password = $${database:password}
 
 [server:main]
 use = egg:waitress#main

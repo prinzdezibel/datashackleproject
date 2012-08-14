@@ -39,11 +39,16 @@
         </div>
         <div id="right" class="align-left">
           <h2>People</h2>
-          <ul>
+          <table id="people">
+            <tr><td>Name</td><td>Birthday</td><td>Picture</td></tr>
             <tal:repeat repeat="person persons">
-                <li>$${person.name}</li>
+                <tr>
+                <td>${person.name}</td>
+                <td>${person.dob}</td>
+                <td><img src="media/${person.fk_pic}" alt="" /></td>
+                <tr>
             </tal:repeat>
-            </ul>
+           </table>
         </div>
       </div>
     </div>

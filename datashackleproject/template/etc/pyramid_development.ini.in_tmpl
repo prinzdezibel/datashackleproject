@@ -10,11 +10,11 @@ pyramid.includes =
     pyramid_debugtoolbar
     pyramid_tm
 
-datashackle.db_provider $${database:provider}
-datashackle.db_host $${database:host}
-datashackle.db_name $${database:name}
-datashackle.db_user $${database:user}
-datashackle.db_password $${database:password}
+datashackle.db_provider = $${database:provider}
+datashackle.db_host = $${database:host}
+datashackle.db_name = $${database:name}
+datashackle.db_user = $${database:user}
+datashackle.db_password = $${database:password}
 
 [server:main]
 use = egg:waitress#main
