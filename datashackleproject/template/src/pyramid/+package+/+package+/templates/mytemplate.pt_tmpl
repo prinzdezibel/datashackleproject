@@ -43,9 +43,9 @@
             <tr><td>Name</td><td>Birthday</td><td>Picture</td></tr>
             <tal:repeat repeat="person persons">
                 <tr>
-                <td>${person.name}</td>
-                <td>${person.dob}</td>
-                <td><img src="media/${person.fk_pic}" alt="" /></td>
+                <td>$${person.name}</td>
+                <td>$${person.dob}</td>
+                <td><img src="media/$${person.fk_pic}" alt="" /></td>
                 <tr>
             </tal:repeat>
            </table>
