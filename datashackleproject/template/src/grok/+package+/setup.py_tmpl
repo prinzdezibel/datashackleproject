@@ -19,7 +19,8 @@ ${long_description|nothing}""",
       include_package_data=True,
       zip_safe=${repr(bool(zip_safe))|False},
       install_requires=['setuptools',
-                        ${install_requires|nothing}
+                        ${install_requires|nothing},
+                        'p2.datashackle.core',
                         # Add extra requirements here
                         ],
        entry_points={

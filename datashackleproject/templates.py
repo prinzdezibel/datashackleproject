@@ -1,10 +1,11 @@
+import shutil
 import stat
 import sys
 import os
 import urllib2
 import urlparse
 import xml.sax.saxutils
-from paste.script import templates
+from paste.script import templates, command
 from paste.script.templates import NoDefault
 from datashackleproject.utils import run_buildout
 from datashackleproject.utils import ask_var
@@ -20,6 +21,8 @@ class DatashackleProject(templates.Template):
     summary = "A datashackle project"
     required_templates = []
     vars = [
+        ask_var('app_type', 'Should I create a pyramid or grok application?',
+                default=NoDefault, should_ask=True),
         ask_var(
             'user', 'Name of an initial administrator user',
             default=NoDefault),
@@ -45,7 +48,7 @@ class DatashackleProject(templates.Template):
         ask_var(
             'run_buildout', (
             "After creating the project area, run the buildout."),
-            default=False, should_ask=True,
+            default=False, should_ask=False,
             getter=get_boolean_value_for_option),
         ask_var(
             'use_distribute',
@@ -74,7 +77,35 @@ class DatashackleProject(templates.Template):
                 skipped_vars[var.name] = var.getter(vars, var)
                 self.vars.remove(var)
 
-        vars = super(DatashackleProject, self).check_vars(vars, cmd)
+        expect_vars = self.read_vars(cmd)
+        converted_vars = {}
+        unused_vars = vars.copy()
+        errors = []
+        for var in expect_vars:
+            if var.name not in unused_vars:
+                if cmd.interactive:
+                    prompt = 'Enter %s' % var.full_description()
+                    while True:
+                        response = cmd.challenge(prompt, var.default, var.should_echo)
+                        if var.name == 'app_type' and response not in ['pyramid', 'grok']:
+                            print "Error: Please enter 'pyramid' OR 'grok'. This way I can create " \
+                                   "an appropriate application skeleton for you."
+                        else:
+                            break
+                    converted_vars[var.name] = response
+                elif var.default is command.NoDefault:
+                    errors.append('Required variable missing: %s'
+                                  % var.full_description())
+                else:
+                    converted_vars[var.name] = var.default
+            else:
+                converted_vars[var.name] = unused_vars.pop(var.name)
+        if errors:
+            raise command.BadCommand(
+                'Errors in variables:\n%s' % '\n'.join(errors))
+        converted_vars.update(unused_vars)
+        vars.update(converted_vars)
+        
         for name in skipped_vars:
             vars[name] = skipped_vars[name]
 
@@ -151,7 +182,27 @@ class DatashackleProject(templates.Template):
         mode = os.stat(path)[stat.ST_MODE]
         mode |= stat.S_IXUSR
         os.chmod(path, mode)  
-        
+
+
+        if vars['app_type'] == 'pyramid':
+            src = os.path.sep.join([vars['package_directory'], 'src'])
+            # remove grok application skeleton
+            shutil.rmtree(os.path.sep.join([src, 'grok']))
+            # move pyramid application up one dir
+            dst = os.path.sep.join([src, vars['package']])
+            target = os.path.sep.join([src, 'pyramid', vars['package']])
+            os.rename(target, dst)
+            shutil.rmtree(os.path.sep.join([src, 'pyramid']))
+        elif vars['app_type'] == 'grok':
+            src = os.path.sep.join([vars['package_directory'], 'src'])
+            # remove pyramid application skeleton
+            shutil.rmtree(os.path.sep.join([src, 'pyramid']))
+            # move pyramid application up one dir
+            dst = os.path.sep.join([src, vars['package']])
+            target = os.path.sep.join([src, 'grok', vars['package']])
+            os.rename(target, dst)
+            shutil.rmtree(os.path.sep.join([src, 'grok']))
+
         if not vars['run_buildout']:
             return
         original_dir = os.getcwd()

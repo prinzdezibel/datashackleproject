@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.1.2'
+VERSION = '0.1.4'
 
 _description = (
     "Script that creates a Datashackle skeleton for "
@@ -28,12 +28,12 @@ setup(
     name='datashackleproject',
     version=VERSION,
     author='Michael Jenny',
-    author_email='michael.jenny@projekt-und-partner.de',
-    url='',
+    author_email='michaelj@datashackle.net',
+    url='http://datashackle.net',
     download_url='',
     description=_description,
     long_description=long_description,
-    license='Proprietary',
+    license='GPL',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,

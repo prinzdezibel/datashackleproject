@@ -77,8 +77,6 @@
     <include package="zope.browserresource" file="meta.zcml" />
     <browser:defaultView name="index.html" />
     
-    <include package="menhir.contenttype.privatefolder" />
-    
 </configure>
 
 

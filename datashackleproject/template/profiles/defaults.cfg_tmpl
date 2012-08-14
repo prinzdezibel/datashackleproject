@@ -1,15 +1,3 @@
-[nodejs]
-root = $${buildout:directory}/src/node
-sources = $${buildout:directory}/src/node
-server_dir = $${buildout:parts-directory}/node/bin
-host = localhost
-scripting = Off
-port = 8081
-
-[supervisord]
-port = 8084
-host = localhost
-
 [sqlalchemy_migrate]
 repository_path = checkouts/p2.datashackle.repository/src/p2/datashackle/repository
 version_table = p2_sqlmigrate

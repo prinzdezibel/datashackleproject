@@ -4,15 +4,11 @@ import grok
 import transaction
 
 import dolmen.content as content
-from dolmen.app.authentication import initialize_pau
 from grok.util import create_application
-from zope.pluggableauth import PluggableAuthentication as PAU
 from zope.app.wsgi import config
 from zope.app.wsgi.interfaces import WSGIPublisherApplicationCreated
 from zope.component import getUtility
 from zope.app.appsetup.interfaces import IDatabaseOpenedWithRootEvent
-
-from p2.datashackle.core.interfaces import IDbUtility
 
 import ${package}
 from ${package}.interfaces import I${app_class_name}
@@ -46,7 +42,6 @@ def init(event):
        
 @grok.subscribe(WSGIPublisherApplicationCreated)
 def wsgi_app_created(event):
-   """Preinstalls an application instance when the zope application is created."""
    db = event.application.requestFactory._db
    connection = db.open()
    root = connection.root()

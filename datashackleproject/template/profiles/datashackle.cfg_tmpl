@@ -1,12 +1,11 @@
 [buildout]
 develop = 
-    .
+    src/${package}
     checkouts/p2.windowmanager.layout
     checkouts/p2.windowmanager.skin
     checkouts/p2.datashackle.core
     checkouts/p2.container
     checkouts/p2.datashackle.management
-    checkouts/menhir.contenttype.privatefolder
     checkouts/p2.datashackle.repository
 
 eggs +=
@@ -35,10 +34,7 @@ eggs +=
     megrok.z3ctable
     menhir.contenttype.document
     menhir.contenttype.folder
-#    menhir.contenttype.user
-    menhir.contenttype.privatefolder
     menhir.simple.navtree
-#    gp.fileupload
     MySQL-python
     Paste
     PasteScript
@@ -48,7 +44,6 @@ eggs +=
     repoze.vhm
     simplejson
     sqlalchemy-migrate
-#    WSGIUtils
     z3c.evalexception>=2.0
     zope.app.form
     zope.catalog
@@ -68,8 +63,6 @@ eggs +=
     p2.windowmanager.skin
 
 parts +=
-#    staticlxml
-#
 # for PIL imaging
     zlib
     libjpeg
@@ -85,6 +78,8 @@ parts +=
     i18n_datashackle
     debug_ini
     deploy_ini
+    pyramid_development_ini
+    pyramid_production_ini
     wsgi_app
     omelette
     migrate
@@ -95,7 +90,7 @@ extends-cache = extends-cache
 
 # http://svn.zope.org/groktoolkit
 extends =      
-    http://gitweb.dolmen-project.org/misc.git?a=blob_plain;f=dolmen-kgs-0.6.2.cfg;hb=HEAD
+    http://grok.zope.org/releaseinfo/1.5/versions.cfg
 
 newest = false
 
@@ -115,38 +110,53 @@ always-checkout = false
 sources-dir=checkouts
 sources = checkouts
 auto-checkout = 
-    menhir.simple.navtree
-    menhir.contenttype.privatefolder
     p2.windowmanager.layout
     p2.windowmanager.skin
     p2.datashackle.core
     p2.container
     p2.datashackle.management
     p2.datashackle.repository
+    dolmen.app.layout
+    dolmen.forms.base
+    dolmen.app.viewselector
+    megrok.z3ctable
+    menhir.simple.navtree
+
 
 [checkouts]
-p2.windowmanager.layout = git me@git.projekt-und-partner.de:p2.windowmanager.layout.git 
-p2.windowmanager.skin = git me@git.projekt-und-partner.de:p2.windowmanager.skin.git
-p2.datashackle.core = git me@git.projekt-und-partner.de:p2.datashackle.core.git
-p2.container = git me@git.projekt-und-partner.de:p2.container.git
-p2.datashackle.management = git me@git.projekt-und-partner.de:p2.datashackle.management.git 
-p2.datashackle.repository = git me@git.projekt-und-partner.de:p2.datashackle.repository.git 
+# Authenticated access
+#p2.datashackle.core = git git@github.com:prinzdezibel/p2.datashackle.core.git
+#p2.datashackle.management = git git@github.com:prinzdezibel/p2.datashackle.management.git 
+#p2.datashackle.repository = git git@github.com:prinzdezibel/p2.datashackle.repository.git
 
-menhir.simple.navtree          = git me@git.projekt-und-partner.de:menhir.simple.navtree.git
+# Authenticated git access - DEPRECATED packages
+#p2.windowmanager.layout    = git me@git.projekt-und-partner.de:p2.windowmanager.layout.git 
+#p2.windowmanager.skin      = git me@git.projekt-und-partner.de:p2.windowmanager.skin.git
+#p2.container               = git me@git.projekt-und-partner.de:p2.container.git
+#menhir.simple.navtree      = git me@git.projekt-und-partner.de:menhir.simple.navtree.git
 
-# Authenticated example:  gitosis@devel.dolmen-project.org:menhir.contenttype.image.git
-#
 # Anonymous git access
-# dolmen.authentication          = git git://devel.dolmen-project.org/dolmen.authentication.git  tag=pre-1.0
-#node-jsonrpc                   = git https://github.com/andris9/node-jsonrpc.git path=src/node/modules egg=false
+p2.datashackle.core = git https://github.com/prinzdezibel/p2.datashackle.core.git
+p2.datashackle.management = git https://github.com/prinzdezibel/p2.datashackle.management.git
+p2.datashackle.repository = git https://github.com/prinzdezibel/p2.datashackle.repository.git
 
-menhir.contenttype.privatefolder = git git://devel.dolmen-project.org/menhir.contenttype.privatefolder.git
+# Anonymous git access - DEPRECATED packages
+p2.windowmanager.layout         = git git://git.projekt-und-partner.de/p2.windowmanager.layout.git 
+p2.windowmanager.skin           = git git://git.projekt-und-partner.de/p2.windowmanager.skin.git
+p2.container                    = git git://git.projekt-und-partner.de/p2.container.git
+menhir.simple.navtree           = git git://git.projekt-und-partner.de/menhir.simple.navtree.git
+dolmen.app.layout               = git git://git.projekt-und-partner.de/dolmen.app.layout.git
+dolmen.forms.base               = git git://git.projekt-und-partner.de/dolmen.forms.base.git
+dolmen.app.viewselector         = git git://git.projekt-und-partner.de/dolmen.app.viewselector.git
+megrok.z3ctable                 = git git://git.projekt-und-partner.de/megrok.z3ctable.git
+
+
 
 
 
 [zlib]
 recipe          = hexagonit.recipe.cmmi
-url             = http://zlib.net/zlib-1.2.6.tar.gz
+url             = http://zlib.net/zlib-1.2.7.tar.gz
 md5hash         = 618e944d7c7cd6521551e30b32322f4a
 make-targets    = install
 
@@ -203,16 +213,11 @@ blobstorage = $${buildout:directory}/var/blobstorage
 logfiles = $${buildout:directory}/var/log
 extra =
     <product-config setmanager>
-        db_provider $${database:provider}
-        db_host $${database:host}
-        db_name $${database:name}
-        db_user $${database:user}
-        db_password $${database:password}
-        management_styles $${buildout:directory}/styles
-        node_host $${nodejs:host}
-        node_port $${nodejs:port}
-        node_root $${nodejs:root}
-        nodeserver_scripting $${nodejs:scripting}
+        datashackle.db_provider $${database:provider}
+        datashackle.db_host $${database:host}
+        datashackle.db_name $${database:name}
+        datashackle.db_user $${database:user}
+        datashackle.db_password $${database:password}
     </product-config> 
 
 [zope_conf_debug]
@@ -228,25 +233,6 @@ recipe = collective.recipe.template
 output = $${buildout:parts-directory}/etc/zope.deploy.conf
 devmode = off
 
-#[instance]
-#recipe = collective.recipe.template
-#input = etc/zope.conf.in
-#output = $${buildout:parts-directory}/etc/zope.conf
-#filestorage = $${buildout:directory}/var/filestorage
-#blobstorage = $${buildout:directory}/var/blobstorage
-#extra =
-#    <product-config setmanager>
-#        db_provider $${database:provider}
-#        db_host $${database:host}
-#        db_name $${database:name}
-#        db_user $${database:user}
-#        db_password $${database:password}
-#        node_host $${nodejs:host}
-#        node_port $${nodejs:port}
-#        node_root $${nodejs:root}
-#        nodeserver_scripting $${nodejs:scripting}
-#        buildout_root $${buildout:directory}
-#    </product-config> 
 
 [i18n]
 recipe = z3c.recipe.i18n:i18n
@@ -280,18 +266,32 @@ domain = ${package}
 output = src/${package}/src/p2/datashackle/locales
 zcml = 
 
+[pyramid_development_ini]
+recipe = collective.recipe.template
+input = etc/pyramid_development.ini.in
+output = $${buildout:parts-directory}/etc/pyramid_development.ini  
+port = 8081
+host = 0.0.0.0
+
+[pyramid_production_ini]
+recipe = collective.recipe.template
+input = etc/pyramid_production.ini.in
+output = $${buildout:parts-directory}/etc/pyramid_production.ini  
+port = 8081
+host = 0.0.0.0
+
 [debug_ini]
 recipe = collective.recipe.template
 input = etc/debug.ini.in
 output = $${buildout:parts-directory}/etc/debug.ini  
-host = 127.0.0.1
+host = 0.0.0.0
 port = 8080
 
 [deploy_ini]
 recipe = collective.recipe.template
 input = etc/production.ini.in
 output = $${buildout:parts-directory}/etc/production.ini  
-host = 127.0.0.1
+host = 0.0.0.0
 port = 8080
 
 [wsgi_app]

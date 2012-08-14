@@ -1,7 +1,0 @@
-#!/bin/sh
-export PATH=$PATH:${nodejs:server_dir}
-cd ${nodejs:sources}
-${nodejs:server_bin} ${nodejs:sources}/main.js &
-echo $! > ${buildout:directory}/var/nodeserver.pid
-trap 'kill -int `cat ${buildout:directory}/var/nodeserver.pid`; rm ${buildout:directory}/var/nodeserver.pid' INT TERM EXIT
-wait $!
